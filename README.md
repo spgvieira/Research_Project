@@ -5,7 +5,7 @@ Authors:
 * [Sara Vieira](sapi@itu.dk)
 
 Supervisor:
-* [Maria Sinziiana Astefanoaei]e(msia@itu.dk)
+* [Maria Sinziiana Astefanoaeie](msia@itu.dk)
 
 IT University of Copenhagen Spring 2026
 
