@@ -27,5 +27,25 @@ def plot_change_matrix(year):
     plt.tight_layout()
     plt.savefig('ChangeMatrix/ChangeMatrix' + str(year - 1) + '_' + str(year) + '.png', dpi=300, bbox_inches='tight')
 
-# To use it with your data:
-plot_change_matrix(23)
+def plot_change_count():
+    df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
+
+    df['Changes'] = df['Changes'].astype(str)
+    total_sum = df['Value'].sum()
+    print(total_sum)
+    df['Percentage'] = (df['Value'] / total_sum) * 100
+
+    bars = plt.bar(df['Changes'], df['Percentage'], color='blue')
+
+    plt.bar_label(bars, fmt='%.2f%%', padding=3)
+
+    plt.xlabel('No. of Changes')
+    plt.ylabel('Percentage (%)')
+    plt.title('Bar Plot from CSV Data')
+
+    plt.ylim(0, df['Percentage'].max() * 1.15)
+
+    plt.tight_layout()
+    plt.savefig('change_count.png')
+
+plot_change_count()
