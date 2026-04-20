@@ -28,7 +28,7 @@ def plot_change_matrix(year):
     plt.savefig('ChangeMatrix/ChangeMatrix' + str(year - 1) + '_' + str(year) + '.png', dpi=300, bbox_inches='tight')
 
 def plot_change_count():
-    df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
+    df = pd.read_csv('Results/ChangeCountNoRSC20_25.csv', header=None, names=['Changes', 'Value'])
 
     df['Changes'] = df['Changes'].astype(str)
     total_sum = df['Value'].sum()
@@ -46,6 +46,6 @@ def plot_change_count():
     plt.ylim(0, df['Percentage'].max() * 1.15)
 
     plt.tight_layout()
-    plt.savefig('change_count.png')
+    plt.savefig('change_count_no_rsc.png')
 
 plot_change_count()
