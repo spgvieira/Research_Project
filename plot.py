@@ -3,7 +3,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
-def plot_change_matrix(year):
+def plot_change_matrix():
     # Load data
     df = pd.read_csv('Results/ChangeMatrix20_25.csv', index_col=0)
 
@@ -14,7 +14,7 @@ def plot_change_matrix(year):
     # Create custom labels: "Raw Value \n (Percentage%)"
     # We use a nested list comprehension to format each cell
     labels = np.array([
-        [f"{val:.2f}\n({pct:.1f}%)" for val, pct in zip(row_val, row_pct)]
+        [f"{pct:.1f}%\n({val:.2f})" for val, pct in zip(row_val, row_pct)]
         for row_val, row_pct in zip(df.values, df_percent.values)
     ])
 
@@ -30,7 +30,6 @@ def plot_change_matrix(year):
                 annot_kws={'size': 12}, # Adjust font size here to fit both lines
                 cbar_kws={'label': 'Percentage Class Area Change'})
     
-    plt.title("Land Cover Change Matrix from 2020 to 2025", fontsize=15, pad=20)
     plt.xlabel("2020 Land Cover Class", fontsize=12)
     plt.ylabel("2025 Land Cover Class", fontsize=12)
     plt.xticks(rotation=45, ha='right')
@@ -39,25 +38,24 @@ def plot_change_matrix(year):
     plt.savefig('ChangeMatrix/ChangeMatrix20_25.png', dpi=300, bbox_inches='tight')
 
 def plot_change_count():
-    df = pd.read_csv('Results/ChangeCountNoRSC20_25.csv', header=None, names=['Changes', 'Value'])
+    df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
 
     df['Changes'] = df['Changes'].astype(str)
     total_sum = df['Value'].sum()
     print(total_sum)
     df['Percentage'] = (df['Value'] / total_sum) * 100
 
-    bars = plt.bar(df['Changes'], df['Percentage'], color='blue')
+    bars = plt.bar(df['Changes'], df['Percentage'], color='#c4281b')
 
     plt.bar_label(bars, fmt='%.2f%%', padding=3)
 
     plt.xlabel('No. of Changes')
     plt.ylabel('Percentage (%)')
-    plt.title('Bar Plot from CSV Data')
 
     plt.ylim(0, df['Percentage'].max() * 1.15)
 
     plt.tight_layout()
-    plt.savefig('change_count_no_rsc.png')
+    plt.savefig('change_count.png')
 
 def plot_classifications_separate():
     df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
@@ -148,4 +146,4 @@ def plot_percentage_stacked_bar_custom():
     plt.tight_layout()
     plt.savefig('classifications_daa_comparison_stacked.png')
 
-plot_change_matrix(22)
+plot_change_matrix()
