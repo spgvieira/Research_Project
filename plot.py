@@ -145,5 +145,3 @@ def plot_percentage_stacked_bar_custom():
     
     plt.tight_layout()
     plt.savefig('classifications_daa_comparison_stacked.png')
-
-plot_change_matrix()
