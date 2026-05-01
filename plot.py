@@ -5,7 +5,7 @@ import numpy as np
 
 def plot_change_matrix():
     # Load data
-    df = pd.read_csv('Results/ChangeMatrix20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ChangeMatrixSumNoRSC.csv', index_col=0)
 
     # Calculate percentages based on columns (initial year)
     row_sums = df.sum(axis=0)
@@ -30,12 +30,12 @@ def plot_change_matrix():
                 annot_kws={'size': 12}, # Adjust font size here to fit both lines
                 cbar_kws={'label': 'Percentage Class Area Change'})
     
-    plt.xlabel("2020 Land Cover Class", fontsize=12)
-    plt.ylabel("2025 Land Cover Class", fontsize=12)
+    plt.xlabel("Original Land Cover Class", fontsize=12)
+    plt.ylabel("Year After Land Cover Class", fontsize=12)
     plt.xticks(rotation=45, ha='right')
     
     plt.tight_layout()
-    plt.savefig('ChangeMatrix/ChangeMatrix20_25.png', dpi=300, bbox_inches='tight')
+    plt.savefig('ChangeMatrix/ChangeMatrixSumNoRSC.png', dpi=300, bbox_inches='tight')
 
 def plot_change_count():
     df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
@@ -58,7 +58,7 @@ def plot_change_count():
     plt.savefig('change_count.png')
 
 def plot_classifications_separate():
-    df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ClassificationsDAANoRSC20_25.csv', index_col=0)
 
     years = df.index.tolist()
 
@@ -74,11 +74,11 @@ def plot_classifications_separate():
         plt.tick_params(axis='x', rotation=45)
 
         plt.tight_layout()
-        plt.savefig('classifications_daa'+ str(year) + '.png')
+        plt.savefig('classifications_daa_no_rsc'+ str(year) + '.png')
         plt.clf() 
 
 def plot_classifications_comparison():
-    df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ClassificationsDAANoRSC20_25.csv', index_col=0)
     df_percent = df.div(df.sum(axis=1), axis=0) * 100
 
     ax = df_percent.T.plot(kind='bar', figsize=(16, 8), edgecolor='black', width=0.85)
@@ -96,7 +96,7 @@ def plot_classifications_comparison():
     # Adjust y-limit to provide space for vertical labels
     plt.ylim(0, df_percent.max().max() * 1.2)
     plt.tight_layout()
-    plt.savefig('classifications_daa_comparison.png')
+    plt.savefig('classifications_daa_comparison_no_rsc.png')
 
 # Your provided color set
 DW_CLASS = {
@@ -113,7 +113,7 @@ DW_CLASS = {
 
 def plot_percentage_stacked_bar_custom():
     # Load and normalize data to percentages
-    df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ClassificationsDAANoRSC20_25.csv', index_col=0)
     df_perc = df.divide(df.sum(axis=1), axis=0) * 100
     
     # 2. Sort columns by their total sum across all years (descending)
@@ -144,4 +144,6 @@ def plot_percentage_stacked_bar_custom():
     plt.legend(title='', bbox_to_anchor=(1.02, 1), loc='upper left')
     
     plt.tight_layout()
-    plt.savefig('classifications_daa_comparison_stacked.png')
+    plt.savefig('classifications_daa_comparison_no_rsc_stacked.png')
+
+plot_classifications_separate()
