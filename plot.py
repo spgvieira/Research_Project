@@ -3,6 +3,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import numpy as np
 
+# This file contains functions generated with the help of Google LLM GEMINI to plot
+# the visualizations used throughout the project
+
 def plot_change_matrix():
     # Load data
     df = pd.read_csv('Results/ChangeMatrixSumNoRSC.csv', index_col=0)
@@ -38,24 +41,49 @@ def plot_change_matrix():
     plt.savefig('ChangeMatrix/ChangeMatrixSumNoRSC.png', dpi=300, bbox_inches='tight')
 
 def plot_change_count():
+    # Load the data
     df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
+    df_no_rsc = pd.read_csv('Results/ChangeCountNoRSC20_25.csv', header=None, names=['Changes', 'Value'])
 
+    # Convert 'Changes' to string
     df['Changes'] = df['Changes'].astype(str)
+    df_no_rsc['Changes'] = df_no_rsc['Changes'].astype(str)
+
+    # Calculate percentages
     total_sum = df['Value'].sum()
-    print(total_sum)
     df['Percentage'] = (df['Value'] / total_sum) * 100
 
-    bars = plt.bar(df['Changes'], df['Percentage'], color='#c4281b')
+    total_sum_no_rsc = df_no_rsc['Value'].sum()
+    df_no_rsc['Percentage'] = (df_no_rsc['Value'] / total_sum_no_rsc) * 100
 
-    plt.bar_label(bars, fmt='%.2f%%', padding=3)
+    # Set the positions and width for the bars
+    x = np.arange(len(df['Changes']))  # the label locations
+    width = 0.39  # the width of the bars
 
-    plt.xlabel('No. of Changes')
-    plt.ylabel('Percentage (%)')
+    # Create the figure and axis
+    fig, ax = plt.subplots(figsize=(12, 6))
 
-    plt.ylim(0, df['Percentage'].max() * 1.15)
+    # Plot the bars
+    bars1 = ax.bar(x - width/2, df['Percentage'], width, label='With RSC', color='#e49635')
+    bars2 = ax.bar(x + width/2, df_no_rsc['Percentage'], width, label='Without RSC', color='#88b053')
 
+    # Add labels and title
+    ax.set_xlabel('No. of Classification Changes per Pixel from 2020 to 2025')
+    ax.set_ylabel('Percentage of Pixels (%)')
+    ax.set_xticks(x)
+    ax.set_xticklabels(df['Changes'])
+    ax.legend()
+
+    # Add bar labels
+    ax.bar_label(bars1, fmt='%.2f%%', padding=5, size=12)
+    ax.bar_label(bars2, fmt='%.2f%%', padding=5, size=12)
+
+    # Adjust the y-axis limit
+    ax.set_ylim(0, 100)
+
+    # Save the plot
     plt.tight_layout()
-    plt.savefig('change_count.png')
+    plt.savefig('change_count_comparison.png', dpi=300, bbox_inches='tight')
 
 def plot_classifications_separate():
     df = pd.read_csv('Results/ClassificationsDAANoRSC20_25.csv', index_col=0)
@@ -113,7 +141,7 @@ DW_CLASS = {
 
 def plot_percentage_stacked_bar_custom():
     # Load and normalize data to percentages
-    df = pd.read_csv('Results/ClassificationsDAANoRSC20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
     df_perc = df.divide(df.sum(axis=1), axis=0) * 100
     
     # 2. Sort columns by their total sum across all years (descending)
@@ -135,15 +163,37 @@ def plot_percentage_stacked_bar_custom():
         h = p.get_height()
         if h > 2.5:
             ax.text(p.get_x() + p.get_width()/2, p.get_y() + h/2, f'{h:.1f}%', 
-                    ha='center', va='center', fontsize=9, color='white', fontweight='bold')
+                    ha='center', va='center', fontsize=12, color='white', fontweight='bold')
 
     # Formatting and Legend
-    plt.title('Annual Classifications from Dynamic World', fontsize=16)
-    plt.ylabel('Percentage (%)')
+    plt.ylabel('Percentage of DAA Area Per Class (%)')
     plt.xticks(rotation=0)
-    plt.legend(title='', bbox_to_anchor=(1.02, 1), loc='upper left')
+    plt.legend(title='', bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=12)
     
     plt.tight_layout()
-    plt.savefig('classifications_daa_comparison_no_rsc_stacked.png')
+    plt.savefig('classifications_daa_comparison_stacked.png')
 
-plot_classifications_separate()
+def calculate_land_dynamics(file_path):
+    # Load the CSV, setting the first column as the index
+    df = pd.read_csv(file_path, index_col=0)
+    
+    # Convert dataframe to a numpy matrix for easy math
+    matrix = df.to_numpy()
+    
+    # 1. Total area represented in the matrix
+    total_area = matrix.sum()
+    
+    # 2. Area that stayed the same (sum of the diagonal)
+    stayed_same_area = np.trace(matrix)
+    
+    # 3. Area that changed (total minus diagonal)
+    changed_area = total_area - stayed_same_area
+    
+    # Calculate percentages
+    percent_stayed = (stayed_same_area / total_area) * 100
+    percent_changed = (changed_area / total_area) * 100
+    
+    print("Stayed Same:" + str(stayed_same_area) + "Percentage Changed:" + str(changed_area))
+    print("Percentage Stayed Same:" + str(round(percent_stayed, 2)) + "Percentage Changed:" + str(round(percent_changed, 2)))
+
+calculate_land_dynamics("Results/ChangeMatrixSum.csv")
