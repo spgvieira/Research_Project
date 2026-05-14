@@ -1,6 +1,7 @@
 # Land Use Land Cover Change Misclassification Time Series Analysis of Danish Agricultural Land
 
-This Repository contains the code used for the analysis performed in the Research Project "Dynamic World Land Use Land Cover Changes Time Series Misclassification Analysis of Danish Agricultural Land".
+This Repository contains the code used for the analysis performed in the Research Project "Land Use Land Cover Change Misclassification Time Series
+Analysis of Danish Agricultural Land".
 
 Agricultural expansion and afforestation are some of the most common land use change processes.Accurately quantifying how much land has undergone these processes is critical in tackling global societal challenges. However, the time evolution of agricultural and other vegetation related types of land is unstable by nature. This creates a challenge for Land Cover Land Use (LULC) change analysis, because year to year differences in classification may reflect genuine land transformation, but may also reflect class ambiguity, seasonal surface conditions, or product misclassifications. This study examines how Dynamic World classifies Danish agricultural land from 2020 to 2025 using Danish Agency of Agriculture (DAA) field block data as a reference geometry. Annual Dynamic World mode classifications were compared with the DAA agricultural area, the yearly changes were analysed through change matrices and classification alternation counting. 
 
