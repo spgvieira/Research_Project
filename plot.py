@@ -42,8 +42,8 @@ def plot_change_matrix():
 
 def plot_change_count():
     # Load the data
-    df = pd.read_csv('Results/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
-    df_no_rsc = pd.read_csv('Results/ChangeCountNoRSC20_25.csv', header=None, names=['Changes', 'Value'])
+    df = pd.read_csv('Results/ChangeCount/ChangeCount20_25.csv', header=None, names=['Changes', 'Value'])
+    df_no_rsc = pd.read_csv('Results/ChangeCount/ChangeCountNoRSC20_25.csv', header=None, names=['Changes', 'Value'])
 
     # Convert 'Changes' to string
     df['Changes'] = df['Changes'].astype(str)
@@ -141,7 +141,7 @@ DW_CLASS = {
 
 def plot_percentage_stacked_bar_custom():
     # Load and normalize data to percentages
-    df = pd.read_csv('Results/ClassificationsDAA20_25.csv', index_col=0)
+    df = pd.read_csv('Results/ClassificationsDAA/ClassificationsDAANoRSC20_25.csv', index_col=0)
     df_perc = df.divide(df.sum(axis=1), axis=0) * 100
     
     # 2. Sort columns by their total sum across all years (descending)
@@ -171,7 +171,7 @@ def plot_percentage_stacked_bar_custom():
     plt.legend(title='', bbox_to_anchor=(1.02, 1), loc='upper left', fontsize=12)
     
     plt.tight_layout()
-    plt.savefig('classifications_daa_comparison_stacked.png')
+    plt.savefig('classifications_daa_comparison_no_rsc_stacked.png')
 
 def calculate_land_dynamics(file_path):
     # Load the CSV, setting the first column as the index
@@ -196,4 +196,51 @@ def calculate_land_dynamics(file_path):
     print("Stayed Same:" + str(stayed_same_area) + "Percentage Changed:" + str(changed_area))
     print("Percentage Stayed Same:" + str(round(percent_stayed, 2)) + "Percentage Changed:" + str(round(percent_changed, 2)))
 
-calculate_land_dynamics("Results/ChangeMatrixSum.csv")
+def plot_rsc_changes():
+    # Data from your table
+    periods = ['2020-21', '2021-22', '2022-23', '2023-24', '2024-25']
+    
+    # Values scaled to Millions
+    total_pre = np.array([67223154, 88837093, 85195804, 62425362, 85806833]) / 1e6
+    rsc_counts = np.array([28416582, 47183936, 21401276, 22893903, 0]) / 1e6
+    total_post = np.array([38806572, 19232937, 26587985, 25518499, 66320215]) / 1e6
+    rsc_percents = [42, 53, 25, 37, 0] # From your % RSC column
+
+    x = np.arange(len(periods))
+    width = 0.30
+
+    fig, ax = plt.subplots(figsize=(10, 7))
+
+    # 1. Pre-Filter Bar: RSC on BOTTOM, Remainder on TOP
+    remainder_pre = total_pre - rsc_counts
+    bar_rsc = ax.bar(x - width/2, rsc_counts, width, label='RSC', color='#c4281b') # Red for noise
+    bar_rem = ax.bar(x - width/2, remainder_pre, width, bottom=rsc_counts, 
+                     label='Pre-Filter', color='#e49635')
+
+    # 2. Post-Filter Bar
+    bar_post = ax.bar(x + width/2, total_post, width, label='Post-Filter', color='#88b053')
+
+    # Add Text: Values on top of bars
+    for i in range(len(periods)):
+        # Total Pre-filter value on top
+        ax.text(x[i] - width/2, total_pre[i] + 1, f'{total_pre[i]:.1f}M', ha='center', fontweight='bold')
+        # Total Post-filter value on top
+        ax.text(x[i] + width/2, total_post[i] + 1, f'{total_post[i]:.1f}M', ha='center', fontweight='bold')
+        
+        # RSC Percentages inside the bottom segment
+        if rsc_percents[i] > 0:
+            ax.text(x[i] - width/2, rsc_counts[i]/2, f'{rsc_percents[i]}%', 
+                    ha='center', va='center', color='white', fontweight='bold')
+
+    # Formatting
+    ax.set_ylabel('Total No. Pixels Changed')
+    ax.set_xticks(x)
+    ax.set_xticklabels(periods)
+    ax.set_ylim(0, max(total_pre) * 1.15) # Leave room for labels
+    ax.legend()
+    ax.grid(axis='y', linestyle='--', alpha=0.3)
+
+    plt.tight_layout()
+    plt.savefig('change_number.png')
+    
+plot_rsc_changes()
